@@ -168,14 +168,28 @@ fig_payment = px.pie(
 st.plotly_chart(fig_payment, use_container_width=True)
 
 # ------------------------------
+# ------------------------------
 # 8) Customer Retention (Cohorts)
 # ------------------------------
 st.header("🔁 Customer Retention (Cohort View)")
+
 first_purchase = df_filtered.groupby("customer_id")["order_date"].min().dt.to_period("M").dt.to_timestamp().rename("first_order_month")
-cust = df_filtered[["customer_id","order_id","order_month"]].drop_duplicates().merge(first_purchase, left_on="customer_id", right_index=True)
-cust["months_since_first"] = ((cust["order_month"] - cust["first_order_month"]) / np.timedelta64(1, "M")).round().astype(int)
-cohort = cust.pivot_table(index="first_order_month", columns="months_since_first", values="customer_id", aggfunc="nunique").fillna(0).astype(int)
+
+cust = df_filtered[["customer_id","order_id","order_month"]].drop_duplicates() \
+    .merge(first_purchase, left_on="customer_id", right_index=True)
+
+# FIXED months_since_first calculation
+cust["months_since_first"] = ((cust["order_month"] - cust["first_order_month"]).dt.days // 30).astype(int)
+
+cohort = cust.pivot_table(
+    index="first_order_month",
+    columns="months_since_first",
+    values="customer_id",
+    aggfunc="nunique"
+).fillna(0).astype(int)
+
 st.dataframe(cohort)
+
 
 # ------------------------------
 # 9) Recommendations
