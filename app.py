@@ -33,7 +33,7 @@ df = load_data("ecommerce_dataset.csv")
 st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 st.title("📊 E-commerce Data Analysis Dashboard")
 
-st.markdown("### Use the sidebar to filter data and explore key insights.")
+st.markdown("### Using the sidebar to filter data and explore key insights.")
 
 # ------------------------------
 # Sidebar (short version)
